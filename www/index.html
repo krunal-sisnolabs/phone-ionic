@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' gap:; style-src 'self' 'unsafe-inline'; media-src *" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/font-awesome.min.css" rel="stylesheet">
+  	<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+  	<link rel="stylesheet" type="text/css" href="css/swiper.min.css" />	
+    <link rel="stylesheet" type="text/css" href="css/index.css?v=1" />
+    <title>Matromony</title>
+</head>
+
+<body>
+
+    <!-- home page  -->
+    <div data-role="page" id="infoPage">
+        <div data-role="header" data-theme="a"></div>
+        <div class="infoCont">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide slide1 introSlide">
+                        <div class="skipBtn"><a href="#loginPage" data-transition="slide">Skip</a></div>
+                        <div class="intoTxt">We bring people together. <br>Love unites them...</div>
+                    </div>
+                    <div class="swiper-slide introSlide slide2">
+                        <div data-role="main" class="ui-content">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="slIcon"><i class="fa fa-user-o" aria-hidden="true"></i></div>
+                                    <span>1</span>
+                                </div>    
+                                <div class="col-8 text-left">
+                                    <div>Sign up</div>
+                                    <div class="introTxt">Register for free & put up your Profile</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">                                    
+                                    <div class="slIcon"><i class="fa fa-link" aria-hidden="true"></i></div>
+                                    <span>2</span>
+                                </div>    
+                                <div class="col-8 text-left">
+                                    <div>Connect</div>
+                                    <div class="introTxt">Select & Connect with Matches you like</div>
+                                </div>
+                            </div>    
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="slIcon"><i class="fa fa-diamond" aria-hidden="true"></i></div>
+                                    <span>3</span>
+                                </div>    
+                                <div class="col-8 text-left">
+                                    <div>Interact</div>
+                                    <div class="introTxt">Become a Premium Member & Start a Conversation</div>
+                                </div>
+                            </div>        
+                        </div>                        
+                        <div class="slideLgBtn">
+                            <a href="#signupPage" class="ui-btn ui-btn-inline orgBtn">Signup</a>
+                            <a href="#loginPage" class="ui-btn ui-btn-inline orgBtn submitBtn">Login</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>    
+        </div>
+        <div data-role="main" class="ui-content"></div>
+    </div>
+    <!-- end home page  -->
+
+    <!-- home page  -->
+    <div data-role="page" id="homePage">
+        <div data-role="header" data-theme="a"></div>	   	   
+        <div data-role="main" class="ui-content">
+            <div class="heading">Your Match</div>
+            <div id="matchList"></div>            
+            <input name="homPgNm" id="homPgNm" value="1" type="hidden" />
+            <input name="isHombusy" id="isHombusy" value="no" type="hidden" />
+        </div>
+    </div>
+    <!-- end home page  -->
+
+    <!-- Login page  -->
+    <div data-role="page" id="verifyPhone">
+        <div data-role="header" data-theme="a"></div>
+        <div class="logRgBox">	   	   
+            <div class="lgBgHead">Verify Phone</div>
+            <div data-role="main" class="ui-content">
+                <div id="verifMsg"></div>
+                <form name="loginFrm" method="POST">
+                    <div class="form-group">
+                        <input type="number" id="phoneCode" name="phoneCode" placeholder="Verification Code">
+                    </div>                
+                    <div id="vrfEmailMsg"></div>
+                    <div class="form-group">                    
+                        <button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="verifyPhoneCode">Verify</button> <a href="#" onclick="resendVerifyCode()">Resend Code</a>
+                        <div id="respVeriMsg"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login page  -->
+    <div data-role="page" id="loginPage">
+        <div data-role="header" data-theme="a"></div>
+        <div class="logRgBox">
+            <div class="lgBgHead">Login</div>
+            <div data-role="main" class="ui-content lobBoxCenter">                
+                <form name="loginFrm" method="POST">
+                    <div class="loginImg"><img src="img/logo.png"></div>
+                    <div class="form-group">
+                        <input type="text" id="emailLg" name="emailLg" placeholder="Email Or Mobile Number Or Profile Id">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="passwordLg" name="passwordLg" placeholder="Password">
+                    </div>
+                    <div id="lgMsg"></div>
+                    <div class="form-group">
+                        <button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="userLogin">Login</button><a href="#" class="forgotLink">Forgot Password?</a>
+                    </div>
+                    <div class="form-group newUserBx">
+                        <a href="#signupPage" data-transition="slide" class="ui-btn ui-btn-inline orgBtn submitBtn btnOutline">New User ? Register Free</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- end login page  -->
+
+    <!-- Login page  -->
+    <div data-role="page" id="signupPage">
+        <div data-role="header" data-theme="a"></div>
+        <div class="logRgBox">
+            <div class="lgBgHead">Create Account<span><a href="#loginPage" data-transition="slide" class="ui-btn ui-btn-inline orgBtn submitBtn btnOutline">Login</a></span></div>	   	   
+            <div data-role="main" class="ui-content">                
+                <form name="register" method="POST">
+                    <div class="form-group">
+                        <input type="text" id="first-name" name="first-name" placeholder="Name" value="">
+                        <p class="belowTxt">Enter the name of bride / groom</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="email" name="email" placeholder="Email">
+                        <p class="belowTxt">This will be used to send all communications</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" name="password" placeholder="Set Password">
+                        <p class="belowTxt">Enter a password to keep your account secure</p>
+                    </div>
+                    <div class="form-group">
+                        <div class="ui-radio1 genderLable">Gender: </div>
+                        <input type="radio" value="Male" name="gender" id="chMale" checked> <div class="ui-radio1">Male</div>
+                        <input type="radio" value="Female" id="chFemale" name="gender"> <div class="ui-radio1">Female</div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="dateofbirth" name="dob" placeholder="Date Of Birth" class="selectBox">
+                        <p class="belowTxt">Date of birth of bride / groom</p>
+                    </div>
+                    <div class="form-group">                    
+                        <input type="text" id="mobileNo" name="mobileNo" placeholder="Mobile Number">
+                        <p class="belowTxt">Interested matches will contact you in this number</p>
+                    </div>
+                    <div id="rgMsg"></div>
+                    <div class="form-group">
+                        <button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="userRegister">Register</button>
+                    </div>
+                </form>
+            </div> 
+        </div>       
+    </div>
+    <!-- end login page  -->
+
+    <!-- Edit Profile page  -->
+    <div data-role="page" id="editPage">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight">Edit Profile</div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div class="editAvtar">                                   
+        </div>        
+        <div data-role="main" class="ui-content">
+            <h1 class="h1Tophead">Personal Information</h1>
+            <div class="cart">
+                <div class="cartHead">
+                    A Few lines about your self.
+                    <a href="#editBio" data-transition="slide"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                </div>
+                <div class="cartBody">
+                    <div id="aboutSelfInfo"></div>
+                </div>
+            </div>
+            <div class="cart">
+                <div class="cartHead">Basic Details<a href="#editBasic" data-transition="slide"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>
+                <div class="cartBody">
+                    <div id="bsInfo"></div>
+                </div>
+            </div>
+            <div class="cart">
+                <div class="cartHead">Professional Information<a href="#profInfo" data-transition="slide"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>
+                <div class="cartBody">
+                    <div id="prfnInfo"></div>
+                </div>
+            </div>
+            <div class="cart">
+                <div class="cartHead">Location<a href="#editLoc"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>
+                <div class="cartBody">
+                    <div id="locInfo"></div>
+                </div>
+            </div>
+            <div class="cart">
+                <div class="cartHead">Family Information<a href="#editFamily"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>
+                <div class="cartBody">
+                    <div id="familyInfo"></div>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+    <!--End of Edit Profile page  -->
+
+    <!-- post detail page  -->
+    <div data-role="page" id="editBio">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight">Edit Profile</div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+            <h3>About your self.</h3>
+            <div class="form-group" id="aboTextarea">
+                
+            </div>
+            <div class="form-group">
+                <button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="saveAboutBio">Save</button>
+                <button type="button" class="ui-btn ui-btn-inline orgBtn cancelBg backToEdit">Back</button>
+            </div>
+        </div>
+    </div>
+    <!-- end post detail page  -->   
+
+    <!-- post detail page  -->
+    <div data-role="page" id="editBasic" class="userEditSty">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight">Edit Profile</div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+            <h3>Basic Details</h3>
+            <form name="basicDetailFrm" id="basicDetailFrm" method="post">
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">Name</div>
+                        <div class="col-8">
+                            <input type="text" id="fullName" name="fullName" placeholder="Name" value="">
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">DOB</div>
+                        <div class="col-8">
+                            <input type="date" id="bsDob" name="bsDob" placeholder="Date Of Birth" class="selectBox">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">Height</div>
+                        <div class="col-7" onclick="showEditSlideOption('height', 'Height')">
+                            <div id="height-text" class="editOptTxt">Height</div>
+                            <input type="hidden" name="bsHeight" id="height-inpt">                            
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">Weight</div>
+                        <div class="col-7" onclick="showEditSlideOption('weight', 'weight')">
+                            <div id="weight-text" class="editOptTxt">Weight</div>
+                            <input type="hidden" name="bsWeight" id="weight-inpt">
+                        </div>
+                        <div class="col-1"></div>
+                    </div>                    
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">Marital Status</div>
+                        <div class="col-7" onclick="showEditSlideOption('maritStatus', 'Marital Status')">
+                            <div id="maritStatus-text" class="editOptTxt">Marital Status</div>
+                            <input type="hidden" name="bsMaritStatus" id="maritStatus-inpt">
+                        </div>
+                        <div class="col-1"></div>
+                    </div>                    
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">Body Type</div>
+                        <div class="col-7" onclick="showEditSlideOption('bodyType', 'Body Type')">
+                            <div id="bodyType-text" class="editOptTxt">Body Type</div>
+                            <input type="hidden" name="bsBodyType" id="bodyType-inpt">
+                        </div>
+                        <div class="col-1"></div>
+                    </div>                    
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">Complexion</div>
+                        <div class="col-7" onclick="showEditSlideOption('complexion', 'Complexion')">
+                            <div id="complexion-text" class="editOptTxt">Complexion</div>
+                            <input type="hidden" name="bsComplexion" id="complexion-inpt">
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-4">Physical Status</div>
+                        <div class="col-7" onclick="showEditSlideOption('physicalStatus', 'Physical Status')">
+                            <div id="physicalStatus-text" class="editOptTxt">Physical Status</div>
+                            <input type="hidden" name="bsPhysicalStatus" id="physicalStatus-inpt">
+                        </div>
+                        <div class="col-1"></div>
+                    </div>                    
+                </div>
+                <div id="basicMsg"></div>
+                <div class="form-group">
+                    <button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="saveBasic">Save</button>
+                    <button type="button" class="ui-btn ui-btn-inline orgBtn cancelBg backToEdit">Back</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- end profile page  -->
+    <div data-role="page" id="profInfo" class="userEditSty">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight">Edit Profile</div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+             <h3>Professional Information</h3>
+             <form name="profDetailFrm" id="profDetailFrm" method="post">
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('education', 'Education')">
+                    <div class="col-4">Education</div>
+                    <div class="col-7">
+                        <div id="education-text" class="editOptTxt">Education</div>
+                        <input type="hidden" name="education" id="education-inpt">
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">Education Detail</div>
+                    <div class="col-8">
+                        <input type="text" id="eduDetail" name="eduDetail" placeholder="Education Detail" value="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">College / Institution</div>
+                    <div class="col-8">
+                        <input type="text" id="collegeName" name="collegeName" placeholder="College / Instutuion Name" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('employedIn', 'Employed In')">
+                    <div class="col-4">Employed In</div>
+                    <div class="col-7">
+                        <div id="employedIn-text" class="editOptTxt">Employed In</div>
+                        <input type="hidden" name="empIn" id="employedIn-inpt">
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('occupation', 'Occupation')">
+                    <div class="col-4">Occupation</div>
+                    <div class="col-7">
+                        <div id="occupation-text" class="editOptTxt">Occupation</div>
+                        <input type="hidden" name="occupation" id="occupation-inpt">
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">Occupation Detail</div>
+                    <div class="col-8">
+                        <input type="text" id="occDetail" name="occDetail" placeholder="Occupation Details" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('annualIncome', 'Annual Income')">
+                    <div class="col-4">Annual Income</div>
+                    <div class="col-7">
+                        <div id="annualIncome-text" class="editOptTxt">Annual Income</div>
+                        <input type="hidden" name="annualInc" id="annualIncome-inpt">
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+            <div id="profMsg"></div>
+            <div class="form-group">
+                <button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="saveProf">Save</button>
+                <button type="button" class="ui-btn ui-btn-inline orgBtn cancelBg backToEdit">Back</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    <!-- post detail page  -->
+    <div data-role="page" id="editLoc" class="userEditSty">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight">Edit Profile</div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+             <h3>Location</h3>
+              <form name="locDetailFrm" id="locDetailFrm" method="post">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">Country</div>
+                    <div class="col-8">
+                        <input type="text" name="country" value="India" readonly="">
+                    </div>
+                </div>                    
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">State</div>
+                    <div class="col-8">
+                        <input type="text" name="state" value="Maharashtra" readonly="">                        
+                    </div>
+                </div>                    
+            </div>
+
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('cityDist', 'City/District')">
+                    <div class="col-4">City/Dist.</div>
+                    <div class="col-7">
+                        <div id="cityDist-text" class="editOptTxt">City/District</div>
+                        <input type="hidden" name="cityName" id="cityDist-inpt">                        
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">Village/Town</div>
+                    <div class="col-8">
+                        <input type="text" name="village" id="village" value="" placeholder="Your village/town (optional)">                        
+                    </div>
+                </div>                    
+            </div>
+            <div id="LocMsg"></div>
+            <div class="form-group">
+                <button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="saveLoc">Save</button>
+                <button type="button" class="ui-btn ui-btn-inline orgBtn cancelBg backToEdit">Back</button>
+            </div>
+        </form>
+        </div>
+    </div>
+
+    <div data-role="page" id="editFamily" class="userEditSty">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight">Edit Profile</div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+             <h3>Family Information</h3>
+             <div id="succussMsg"></div>
+             <form name="familyDetailFrm" id="familyDetailFrm" method="post">
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('familyType', 'Family Type')">
+                    <div class="col-4">Family Type</div>
+                    <div class="col-7">
+                        <div id="familyType-text" class="editOptTxt">Family Type</div>
+                        <input type="hidden" name="familyType" id="familyType-inpt">
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+            
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('familyStatus', 'Family Status')">
+                    <div class="col-4">Family Status</div>
+                    <div class="col-7">
+                        <div id="familyStatus-text" class="editOptTxt">Family Status</div>
+                        <input type="hidden" name="familyStatus" id="familyStatus-inpt">                        
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">Father's Occupation</div>
+                    <div class="col-8">
+                        <input type="text" id="fatherOccup" name="fatherOccup" placeholder="Father's Occupation" value="">
+                    </div>
+                </div>                    
+            </div>
+            
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">Mother's Occupation</div>
+                    <div class="col-8">
+                        <input type="text" id="motherOccup" name="motherOccup" placeholder="Mother's Occupation" value="">
+                    </div>
+                </div>                    
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">Ancestral / Family Origin</div>
+                    <div class="col-8">
+                        <input type="text" id="familyOrigin" name="familyOrigin" placeholder="Family Origin" value="">
+                    </div>
+                </div>                    
+            </div>
+             <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('noOfBrothers', 'No. of Brothers')">
+                    <div class="col-4">No. of Brothers</div>
+                    <div class="col-7">
+                        <div id="noOfBrothers-text" class="editOptTxt">No. of Brothers</div>
+                        <input type="hidden" name="brothers" id="noOfBrothers-inpt">
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('broMarried', 'Brothers Married')">
+                    <div class="col-4">Brothers Married</div>
+                    <div class="col-7">
+                        <div id="broMarried-text" class="editOptTxt">Brothers Married</div>
+                        <input type="hidden" name="broMarried" id="broMarried-inpt">
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('noOfSisters', 'No. of Sisters')">
+                    <div class="col-4">No. of Sisters</div>
+                    <div class="col-7">
+                        <div id="noOfSisters-text" class="editOptTxt">No. of Sisters</div>
+                        <input type="hidden" name="sisters" id="noOfSisters-inpt">
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+
+            <div class="form-group">
+                <div class="row" onclick="showEditSlideOption('sisMarried', 'Sisters Married')">
+                    <div class="col-4">Sisters Married</div>
+                    <div class="col-7">
+                        <div id="sisMarried-text" class="editOptTxt">Sisters Married</div>
+                        <input type="hidden" name="sisMarried" id="sisMarried-inpt">                        
+                    </div>
+                    <div class="col-1"></div>
+                </div>                    
+            </div>
+            <div id="successMsg"></div>
+            
+            <div class="form-group">
+                <button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="saveFamily">Save</button>
+                <button type="button" class="ui-btn ui-btn-inline orgBtn cancelBg backToEdit">Back</button>
+            </div>
+        </form>
+        </div>
+    </div>    
+
+    <!-- post detail page  -->
+    <div data-role="page" id="profilePage">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight" id="hdPrfName"></div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div class="profBrifFix">
+            
+        </div>
+        <span id="profAvtar"></span>
+        <div data-role="main" class="ui-content">
+            
+            <div id="profileInfo"></div>
+            <input type="hidden" name="profId" id="profId" value="">
+            <div class="userActBox">
+                
+            </div>
+        </div>
+    </div>
+    <!-- end profile detail page  --> 
+
+    <!-- search page  -->
+    <div data-role="page" id="searchPage">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight"></div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+            <div class="heading">Search</div>
+            <div id="userSearch"></div>
+            <input name="serPgNm" id="serPgNm" value="1" type="hidden" />
+            <input name="isSerBusy" id="isSerBusy" value="no" type="hidden" />
+        </div>
+    </div>
+    <!-- end search page  -->  
+
+    <!-- Advance search page  -->
+    <div data-role="page" id="advanceSearch">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight">Search Profiles</div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+            <div class="heading">Advance Search</div>
+            <div id="advncSearch"></div>
+            <form name="advSearchFrm" id="advSearchFrm" method="post">
+                <div class="searchVal" id="serAge">
+                    Age : <span>Any</span>
+                    <input type="hidden" name="hidAgFrm" id="hidAgFrm" value="0">
+                    <input type="hidden" name="hidAgTo" id="hidAgTo" value="0">
+                </div>
+                <div class="searchVal" id="searchHeight">
+                    Height : <span>Any</span>
+                    <input type="hidden" name="hidHtFrm" id="hidHtFrm" value="0">
+                    <input type="hidden" name="hidHtTo" id="hidHtTo" value="0">
+                </div>
+                <div class="searchVal" id="searchMarried">
+                    Marital Status : <span>Any</span>
+                    <input type="hidden" name="hidMarital" id="hidMarital" value="">
+                </div>
+                <div class="searchVal" id="searchLoc">
+                    Location : <span>Any</span>                    
+                    <input type="hidden" name="hidCity" id="hidCity" value="">
+                </div>
+                <div><button type="button" class="ui-btn ui-btn-inline orgBtn submitBtn" id="advSearchBtn">Search</button></div>
+            </form>
+            <div class="sreachSlide">
+                
+            </div>
+        </div>
+    </div>
+    <!-- end Advance search page  --> 
+
+    <!-- logout detail page  -->
+    <div data-role="page" id="logoutPage">
+        <div class="pageHead">
+            <div class="backLeft">               
+            </div>
+            <div class="backRight">Logout</div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+            <div id="logoutTxt"></div>
+        </div>
+    </div>
+    <!-- end logout detail page  -->   
+
+    <!-- Add Photos Page-->
+    <div data-role="page" id="addPhotosPage">
+        <div class="pageHead">
+            <div class="backLeft">
+                <span onclick="backKeyDown()"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</span>
+            </div>
+            <div class="backRight"></div>
+        </div>
+        <div data-role="header" data-theme="a"></div>
+        <div data-role="main" class="ui-content">
+            <div id="avtarStr"></div>            
+            <div id="moreImages"></div>
+            <div style="height: 50px;"></div>
+        </div>
+        <div class="opnPhotoOpst"></div>
+        <div class="picBg"></div>
+    </div>
+    <!-- end Add Photos Page  -->   
+
+    <div class="appHeader">
+        <div class="flip">
+            <div class="logoTop card">
+                <div class="topNavBar face front"><span class="navBar" onclick="openNav()">&#9776;</span><a href="#homePage" data-transition="slide" class="logoLink">Sisnolabs Matrimony</a>
+                </div>                
+            </div>      
+         </div>
+         <div id="mySidenav" class="sidenav">           
+           <span id="showEdit"><a href="#editPage" data-transition="slide" class="closebtn" onclick="closeNav()"><i class="fa fa-pencil" aria-hidden="true"></i></a></span>
+           <div class="menuTop">
+
+           </div>
+           <div class="menuBott">
+                <a href="#homePage" onclick="closeNav()" data-transition="slide"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
+                <div class="beforeLogin">
+                        <a href="#loginPage" data-transition="slide" class="loginBtn" onclick="closeNav()"><i class="fa fa-sign-in" aria-hidden="true"></i>Login</a>
+                        <a href="#signupPage" data-transition="slide" class="regBtn" onclick="closeNav()"><i class="fa fa-registered" aria-hidden="true"></i>Register</a>
+                </div>
+                <div class="afterLogin">
+                    <a href="#editPage" data-transition="slide" onclick="closeNav()"><i class="fa fa-pencil" aria-hidden="true"></i>Edit Profile</a>
+                    <a href="#logoutPage" data-transition="slide" id="chgPassLink" class="welUser" onclick="closeNav()"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a>
+                </div>                
+           </div>
+         </div>
+         <div class="clearfix"></div>
+         <div class="scrollable">
+            <div class="wrap"></div>
+         </div>
+    </div>
+    <div class="bottomLinks">
+        <a class="text-grey" href="#homePage" data-transition="slide"><i class="fa fa-home"></i> Home</a>	
+	    <a class="text-grey" data-transition="slide" data-direction="reverse" href="#advanceSearch"><i class="fa fa-search"></i> Search</a>
+        <a class="text-grey" href="#" data-transition="slide" ><i class="fa fa-diamond" aria-hidden="true"></i> Upgrade</a>
+    </div>
+    <div id="ajxLoading"><div class="spinner"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div></div>
+    <div class="opabg"></div><div class="opSerbg"></div>
+
+    <div class="bsSlide">
+        <div class="slideHead">
+            <span class="slideTitle"></span>
+            <span class="closeSlide"><i class="fa fa-times" aria-hidden="true"></i> Close</span>
+        </div>
+        <div class="slideBody"></div>
+    </div>    
+    <script type="text/javascript" src="cordova.js"></script>
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>         	
+    <script type="text/javascript" src="js/swiper.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>  
+    <script type="text/javascript" src="js/pulltorefresh.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>
