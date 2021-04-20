@@ -1,0 +1,7 @@
+{
+  "name": "matrimonyapp",
+  "type": "custom",
+  "integrations": {
+    "cordova": {}
+  }
+}

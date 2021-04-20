@@ -1,0 +1,19 @@
+{
+  "name": "matrimonyapp",
+  "version": "1.0.0",
+  "description": "matrimony app",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krunal-sisnolabs/phone-ionic.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krunal-sisnolabs/phone-ionic/issues"
+  },
+  "homepage": "https://github.com/krunal-sisnolabs/phone-ionic#readme"
+}
